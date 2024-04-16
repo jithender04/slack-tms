@@ -1,17 +1,21 @@
-def assignee_block (assignee):
-    return {
+def assignee_block(assignee=None):
+    block = {
         "type": "input",
-        "block_id": "",
+        "block_id": "create_task_assignee",
         "element": {
-            "type": "multi_users_select",
+            "type": "users_select",
             "placeholder": {"type": "plain_text", "text": "Select users", "emoji": True},
-            "action_id": "multi_users_select-action",
-            "initial_user": assignee
+            "action_id": "assignee-select"
         },
-        "label": {"type": "plain_text", "text": "Label", "emoji": True},
+        "label": {"type": "plain_text", "text": "Assignee", "emoji": True}
     }
+    
+    if assignee:
+        block["element"]["initial_user"] = assignee
+    
+    return block
 
-def task_model(title, description, status, assignee, due_date, task_id):
+def task_model(title, description, status, assignee, due_date, payload):
 
     status_option = {"text": {"type": "plain_text", "text": status, "emoji": True}, "value": status}
     return {
@@ -20,7 +24,7 @@ def task_model(title, description, status, assignee, due_date, task_id):
         "title": {"type": "plain_text", "text": "Edit task", "emoji": True},
         "submit": {"type": "plain_text", "text": "Update", "emoji": True},
         "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
-        "private_metadata": task_id,
+        "private_metadata": payload,
         "blocks": [
             {
                 "type": "input",
@@ -57,6 +61,7 @@ def task_model(title, description, status, assignee, due_date, task_id):
                         "options": [
                             {"text": {"type": "plain_text", "text": "Ready", "emoji": True}, "value": "Ready"},
                             {"text": {"type": "plain_text", "text": "In Progress", "emoji": True}, "value": "In Progress"},
+                            {"text": {"type": "plain_text", "text": "Ready For QA", "emoji": True}, "value": "Ready For QA"},
                             {"text": {"type": "plain_text", "text": "Done", "emoji": True}, "value": "Done"},
                         ],
                         "action_id": "status-select-action",
@@ -96,13 +101,13 @@ def static_task_model():
             {
                 "type": "input",
                 "block_id": "create_task_title",
-                "element": {"type": "plain_text_input", "action_id": "text"},
+                "element": {"type": "plain_text_input", "action_id": "text", "placeholder": {"type": "plain_text", "text": " "}},
                 "label": {"type": "plain_text", "text": "Title", "emoji": True},
             },
             {
                 "type": "input",
                 "block_id": "create_task_description",
-                "element": {"type": "plain_text_input", "action_id": "text"},
+                "element": {"type": "plain_text_input", "action_id": "text", "placeholder": {"type": "plain_text", "text": " "}},
                 "label": {"type": "plain_text", "text": "Description", "emoji": True},
             },
             {
@@ -120,6 +125,7 @@ def static_task_model():
                         "options": [
                             {"text": {"type": "plain_text", "text": "Ready", "emoji": True}, "value": "Ready"},
                             {"text": {"type": "plain_text", "text": "In Progress", "emoji": True}, "value": "In Progress"},
+                            {"text": {"type": "plain_text", "text": "Ready For QA", "emoji": True}, "value": "Ready For QA"},
                             {"text": {"type": "plain_text", "text": "Done", "emoji": True}, "value": "Done"},
                         ],
                         "action_id": "status-select-action",
@@ -177,13 +183,13 @@ def homePage(userID):
                             "type": "button",
                             "text": {"type": "plain_text", "text": "Create a Project", "emoji": True},
                             "style": "primary",
-                            "action_id": "create-project",
+                            "action_id": "create_project",
                         },
                         {
                             "type": "button",
                             "text": {"type": "plain_text", "text": "Join a Project", "emoji": True},
                             "style": "primary",
-                            "action_id": "join-project",
+                            "action_id": "join_project",
                         }
                     ],
                 },
@@ -317,5 +323,90 @@ def login_modal(user_id):
                 "element": {"type": "plain_text_input", "action_id": "login_password"},
                 "label": {"type": "plain_text", "text": "Password", "emoji": True},
             },
+        ],
+    }
+
+def project_modal():
+    return {
+        "type": "modal",
+        "callback_id": "create_project",
+        "title": {
+            "type": "plain_text",
+            "text": "Enter Project details",
+            "emoji": True,
+        },
+        "submit": {"type": "plain_text", "text": "Create", "emoji": True},
+        "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
+        "blocks": [
+            {
+                "block_id": "project_name",
+                "type": "input",
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "project_name",
+                    "placeholder": {"type": "plain_text", "text": " "},
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Project Name",
+                    "emoji": True,
+                },
+            },
+            {
+                "block_id": "project_description",
+                "type": "input",
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "project_description",
+                    "placeholder": {"type": "plain_text", "text": " "},
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Description",
+                    "emoji": True,
+                },
+            },
+            {
+                "block_id": "project_developers",
+                "type": "input",
+                "element": {
+                    "action_id": "project_developers",
+                    "type": "multi_users_select",
+                    "placeholder": {"type": "plain_text", "text": " "},
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select Developers",
+                    "emoji": True,
+                },
+            },
+            {
+                "block_id": "project_qa",
+                "type": "input",
+                "element": {
+                    "action_id": "project_qa",
+                    "type": "multi_users_select",
+                    "placeholder": {"type": "plain_text", "text": " "},
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select QA's",
+                    "emoji": True,
+                },
+            },
+            {
+                "block_id": "project_manager",
+                "type": "input",
+                "element": {
+                    "action_id": "project_manager",
+                    "type": "users_select",
+                    "placeholder": {"type": "plain_text", "text": " "},
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select Project Manager",
+                    "emoji": True,
+                },
+            }
         ],
     }

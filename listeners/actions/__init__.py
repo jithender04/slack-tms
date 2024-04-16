@@ -1,5 +1,6 @@
 from .task_actions import *
 from .login_actions import *
+from .project_actions import *
 
 def register(app):
     app.action("create-task")(create_task_model)
@@ -9,3 +10,4 @@ def register(app):
     app.action("update_task")(update_task_model)
     app.action("delete_task")(delete_task_model)
     app.action("login")(show_login_modal)
+    app.action("create_project")(create_project_modal)

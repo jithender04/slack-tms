@@ -1,3 +1,4 @@
+import json
 from user_interface import task_model, static_task_model, update_home_tab
 from helpers.services import service_get_task, service_delete_task
 
@@ -13,8 +14,9 @@ def update_task_model(ack, body, client, action):
     ack()
     task = service_get_task(action["value"], body["user"]["id"])
     task["dueDate"] = task["dueDate"].split(" ")[0]
+    payload = json.dumps({"task_id": action["value"]})
     update_task_model_view = task_model(
-        task["title"], task["description"], task["status"], task["assignee"], task["dueDate"], action["value"]
+        task["title"], task["description"], task["status"], task["assignee"], task["dueDate"], payload
     )
     client.views_open(trigger_id=body["trigger_id"], view=update_task_model_view)
 

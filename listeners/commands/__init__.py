@@ -1,6 +1,6 @@
 from slack_bolt import App
-from .sample_command import sample_command_callback
+from .task_command import create_task_model
 
 
 def register(app: App):
-    app.command("/sample-command")(sample_command_callback)
+    app.command("/create-task")(create_task_model)
