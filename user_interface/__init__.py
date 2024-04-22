@@ -187,9 +187,9 @@ def homePage(userID):
                         },
                         {
                             "type": "button",
-                            "text": {"type": "plain_text", "text": "Join a Project", "emoji": True},
+                            "text": {"type": "plain_text", "text": "Invite members", "emoji": True},
                             "style": "primary",
-                            "action_id": "join_project",
+                            "action_id": "invite_project",
                         }
                     ],
                 },
@@ -312,11 +312,7 @@ def login_modal(user_id):
         "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
         "callback_id": "submit_login_model",
         "blocks": [
-            {
-                "type": "input",
-                "element": {"type": "plain_text_input", "action_id": "login_username", "initial_value": user_id},
-                "label": {"type": "plain_text", "text": "Username", "emoji": True},
-            },
+            {"type": "context", "elements": [{"type": "plain_text", "text": f"Username: {user_id}", "emoji": True}]},
             {
                 "type": "input",
                 "block_id": "login_password",
@@ -399,8 +395,65 @@ def project_modal():
                 "type": "input",
                 "element": {
                     "action_id": "project_manager",
-                    "type": "users_select",
+                    "type": "multi_users_select",
                     "placeholder": {"type": "plain_text", "text": " "},
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select Project Manager",
+                    "emoji": True,
+                },
+            }
+        ],
+    }
+
+def invite_modal(payload):
+    return {
+        "type": "modal",
+        "title": {"type": "plain_text", "text": "Invite to project", "emoji": True},
+        "submit": {"type": "plain_text", "text": "Invite", "emoji": True},
+        "close": {"type": "plain_text", "text": "Cancel", "emoji": True},
+        "callback_id": "submit_invite_members_model",
+        "private_metadata": payload,
+        "blocks": [
+            {
+                "block_id": "project_developers",
+                "type": "input",
+                "optional": True,
+                "element": {
+                    "action_id": "project_developers",
+                    "type": "multi_users_select",
+                    "placeholder": {"type": "plain_text", "text": " "}
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select Developers",
+                    "emoji": True,
+                },
+            },
+            {
+                "block_id": "project_qa",
+                "type": "input",
+                "optional": True,
+                "element": {
+                    "action_id": "project_qa",
+                    "type": "multi_users_select",
+                    "placeholder": {"type": "plain_text", "text": " "}
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select QA's",
+                    "emoji": True,
+                },
+            },
+            {
+                "block_id": "project_manager",
+                "type": "input",
+                "optional": True,
+                "element": {
+                    "action_id": "project_manager",
+                    "type": "multi_users_select",
+                    "placeholder": {"type": "plain_text", "text": " "}
                 },
                 "label": {
                     "type": "plain_text",

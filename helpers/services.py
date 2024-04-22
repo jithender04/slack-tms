@@ -7,7 +7,10 @@ url = f"http://{os.environ.get("host")}:8080/api"
 
 def headers(userId) :
     result = fetch_document(userId)
-    return {'Authorization': f"Bearer {result["token"]}"}
+    if result and "token" in result:
+        return {'Authorization': f"Bearer {result["token"]}"}
+    else:
+        return None
 
 def request_body(payload):
     request_body = {}
@@ -93,6 +96,32 @@ def service_create_project(payload, userId):
         response = requests.post(f"{url}/projects", json=payload, headers=headers(userId))
         if response.status_code == 201:
             print("Created project successfully!")
+            return response.json()
+        else:
+            raise ValueError(f"Request failed with status code {response.status_code}")
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+
+def service_update_project(channel_id, payload, userId):
+    try:
+        response = requests.put(f"{url}/projects/{channel_id}", headers=headers(userId), json=payload)
+        if response.status_code == 200:
+            print("Updated project successfully!")
+            return response.json()
+        else:
+            raise ValueError(f"Request failed with status code {response.status_code}")
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+
+def service_create_account(payload):
+    print(payload)
+    try:
+        response = requests.post(f"{url}/register?multiple_users=true", json=payload)
+        if response.status_code == 201:
+            print("Created accounts successfully!")
+            return response.json()
+        elif response.status_code == 200:
+            print("Accounts already exists!")
             return response.json()
         else:
             raise ValueError(f"Request failed with status code {response.status_code}")
